@@ -65,13 +65,23 @@ async def signup(
     return user
 
 @router.post("/send-verification", status_code=202, tags=["auth"])
-def send_email_verification(data: EmailVerificationRequest, db: Session = Depends(get_db)):
+async def send_email_verification(
+    data: EmailVerificationRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
     user = get_user_by_email(db, data.email)
     if not user:
         raise HTTPException(404, "User not found")
     ev = create_email_verification_code(db, user.id)
     verify_link = f"{settings.FRONTEND_URL}/verify-email?code={ev.code}&email={user.email}"
-    asyncio.create_task(send_verification_email(user.email, ev.code, user.first_name, verify_link))
+    background_tasks.add_task(
+        send_verification_email,
+        user.email,
+        ev.code,
+        user.first_name,
+        verify_link,
+    )
     return {"msg": "Verification code sent"}
 
 @router.post("/verify-email", status_code=200, tags=["auth"])
