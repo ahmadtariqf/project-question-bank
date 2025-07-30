@@ -1,0 +1,13 @@
+# .gitignore
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+# VSCode
+.vscode/
+# Node
+node_modules/
+.next/
+# Env files & venv
+*.env
+backend/.venv/
