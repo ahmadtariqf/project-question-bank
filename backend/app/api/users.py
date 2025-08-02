@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from app.schemas.user import UserRead
 from app.api.deps import get_current_active_user, get_db
 from sqlalchemy.orm import Session
-
+import time
 from app.crud.preference import (
     get_preferences,
     get_preference,
@@ -12,6 +12,15 @@ from app.schemas.preference import PreferenceRead, PreferenceBase
 from app.schemas.user import UserUpdate
 
 router = APIRouter()
+
+
+@router.get("/session", response_model=UserRead, tags=["users"])
+def get_me(current_user = Depends(get_current_active_user)):
+    """
+    Returns the logged-in user's profile (from session cookie).
+    """
+    return current_user
+
 
 @router.get("/me", response_model=UserRead, tags=["users"])
 def read_users_me(current_user = Depends(get_current_active_user)):
@@ -39,6 +48,7 @@ def list_preferences(
     current_user = Depends(get_current_active_user),
     db: Session = Depends(get_db),
 ):
+    # time.sleep(5)  # Simulating a delay for demonstration purposes
     return get_preferences(db, current_user.id)
 
 @router.get("/me/preferences/{key}", response_model=PreferenceRead, tags=["users"])

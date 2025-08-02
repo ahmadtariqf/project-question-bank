@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-8 rounded shadow-md w-full max-w-sm"
+        className="bg-white p-8  shadow-md w-full max-w-sm"
       >
         <h1 className="text-2xl font-bold mb-6 text-center">
           Reset Password
@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
           <label className="block mb-1">Reset Code</label>
           <input
             {...register("code")}
-            className="w-full border rounded px-3 py-2"
+            className="w-full border  px-3 py-2"
             disabled={isSubmitting}
           />
           {errors.code && (
@@ -81,7 +81,7 @@ export default function ResetPasswordPage() {
           <input
             {...register("new_password")}
             type="password"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border  px-3 py-2"
             disabled={isSubmitting}
           />
           {errors.new_password && (
@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
           <input
             {...register("confirm_password")}
             type="password"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border  px-3 py-2"
             disabled={isSubmitting}
           />
           {errors.confirm_password && (
@@ -108,7 +108,7 @@ export default function ResetPasswordPage() {
 
         <button
           type="submit"
-          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 disabled:opacity-50"
+          className="w-full bg-red-600 text-white py-2  hover:bg-red-700 disabled:opacity-50"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Resetting…" : "Reset Password"}

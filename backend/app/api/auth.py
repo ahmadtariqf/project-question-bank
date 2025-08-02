@@ -137,6 +137,18 @@ def login(
         max_age=60 * 60 * 24 * settings.REFRESH_TOKEN_EXPIRE_DAYS,
         path="/api/v1/auth/refresh",
         samesite="lax",
+        secure=settings.SECURE_COOKIES  # Set to True in production
+    )
+
+        # In your /login route, after generating your session token:
+    response.set_cookie(
+        key="session_token",
+        value=access_token,  # or your session token
+        httponly=True,
+        samesite="lax",
+        path="/",
+        max_age=60 * 60 * 24 * 7,  # 1 week
+        secure=settings.SECURE_COOKIES  # Set to True in production
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
@@ -173,10 +185,10 @@ def refresh_token(request: Request, response: Response, db: Session = Depends(ge
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.post("/logout", status_code=204, tags=["auth"])
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT, tags=["auth"])
 def logout(
+    response: Response,
     token: str = Depends(oauth2_scheme),
-    response: Response = None,
     db: Session = Depends(get_db),
 ):
     from app.core.security import decode_access_token
@@ -189,8 +201,23 @@ def logout(
         pass
 
     # clear refresh cookie
-    response.delete_cookie(key="refresh_token", path="/api/v1/auth/refresh")
-    return Response(status_code=204)
+    response.delete_cookie(
+        key="refresh_token",
+        path="/api/v1/auth/refresh",
+        httponly=True,
+        samesite="lax",
+        secure=settings.SECURE_COOKIES,
+    )
+    response.delete_cookie(
+        key="session_token",
+        path="/",
+        httponly=True,
+        samesite="lax",
+        secure=settings.SECURE_COOKIES,
+    )
+    print(response.status_code)
+    response.status_code = status.HTTP_204_NO_CONTENT
+    return response
 
 @router.post("/request-password-reset", status_code=202, tags=["auth"])
 def request_password_reset(data: PasswordResetRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):

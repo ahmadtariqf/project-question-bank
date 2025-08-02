@@ -8,7 +8,7 @@ import React, {
     ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import api from "../lib/axios";
+import api from "../lib/api/client";
 import { setAccessToken, clearAccessToken } from "../lib/auth";
 
 type User = {
@@ -21,6 +21,9 @@ type User = {
     email_verified: boolean;
     created_at: string;
     updated_at: string | null;
+    preferences: {
+        theme: "light" | "dark" | undefined;
+    };
 };
 
 interface AuthContextType {
@@ -41,6 +44,7 @@ interface AuthContextType {
         last_name?: string;
         phone?: string;
     }) => Promise<void>;
+    updatePreference: (key: string, value: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,7 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
-    // on mount, try to fetch current user
     useEffect(() => {
         api
             .get<User>("/users/me")
@@ -63,19 +66,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (email: string, password: string) => {
-        const form = new URLSearchParams();
-        form.append("username", email);
-        form.append("password", password);
+        try {
+            const form = new URLSearchParams();
+            form.append("username", email);
+            form.append("password", password);
+            setLoading(true); 
+            const res = await api.post<{ access_token: string }>("/auth/login", form, {
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            });
+            setAccessToken(res.data.access_token);
 
-        const res = await api.post<{ access_token: string }>("/auth/login", form, {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        });
-        setAccessToken(res.data.access_token);
-
-        // fetch user profile
-        const me = await api.get<User>("/users/me");
-        setUser(me.data);
-        router.push("/dashboard");
+            const me = await api.get<User>("/users/me");
+            setUser(me.data);
+            setLoading(false);
+            router.push("/dashboard");
+        } catch (error: any) {
+            throw error?.response?.data?.detail || "Login failed";
+        }
     };
 
     const signup = async (
@@ -86,22 +93,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         confirm_password: string,
         phone?: string
     ) => {
-        await api.post("/auth/signup", {
-            first_name,
-            last_name,
-            email,
-            phone,
-            password,
-            confirm_password,
-        });
-        // after signup, redirect to verify page
-        router.push(
-            `/verify-email?email=${encodeURIComponent(email)}`
-        );
+        try {
+            await api.post("/auth/signup", {
+                first_name,
+                last_name,
+                email,
+                phone,
+                password,
+                confirm_password,
+            });
+            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+        } catch (error: any) {
+            throw error?.response?.data?.detail || "Signup failed";
+        }
     };
 
     const logout = async () => {
-        await api.post("/auth/logout");
+        try {
+            await api.post("/auth/logout");
+        } catch (error) {
+            // Optionally handle logout error
+        }
         clearAccessToken();
         setUser(null);
         router.push("/login");
@@ -112,18 +124,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         last_name?: string;
         phone?: string;
     }) => {
-        const res = await api.put<User>("/users/me", data);
-        setUser(res.data);
+        try {
+            const res = await api.put<User>("/users/me", data);
+            setUser(res.data);
+        } catch (error: any) {
+            throw error?.response?.data?.detail || "Profile update failed";
+        }
+    };
+
+    const updatePreference = async (key: string, value: string) => {
+        try {
+            await api.put(`/users/me/preferences/${key}`, { key, value });
+            // Re-fetch user to get updated preferences
+            const me = await api.get<User>("/users/me");
+            setUser(me.data);
+        } catch (error: any) {
+            throw error?.response?.data?.detail || "Preference update failed";
+        }
     };
 
     return (
         <AuthContext.Provider
-            value={{ user, loading, login, signup, logout, updateProfile, }}
+            value={{ user, loading, login, signup, logout, updateProfile, updatePreference }}
         >
             {children}
         </AuthContext.Provider>
     );
 }
+
 
 export function useAuth(): AuthContextType {
     const ctx = useContext(AuthContext);

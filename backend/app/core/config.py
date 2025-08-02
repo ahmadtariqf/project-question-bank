@@ -11,7 +11,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     MAX_FAILED_LOGIN_ATTEMPTS: int = 5
-
+    ENVIRONMENT: str = "development"  # or "production"
+    SECURE_COOKIES: bool = Field(
+        default=False, 
+        description="Set to True in production to enable secure cookies"
+    )
     LOCKOUT_TIME_MINUTES: int = 15
 
     # ── Mail settings match your .env keys ───────────────────────────────

@@ -58,7 +58,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-8 rounded shadow-md w-full max-w-md"
+        className="bg-white p-8  shadow-md w-full max-w-md"
       >
         <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
 
@@ -71,7 +71,7 @@ export default function SignupPage() {
               </label>
               <input
                 {...register(field as "first_name" | "last_name")}
-                className="w-full border rounded px-3 py-2"
+                className="w-full border  px-3 py-2"
                 disabled={isSubmitting}
               />
               {errors[field as keyof SignupForm] && (
@@ -89,7 +89,7 @@ export default function SignupPage() {
           <input
             {...register("email")}
             type="email"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border  px-3 py-2"
             disabled={isSubmitting}
           />
           {errors.email && (
@@ -103,7 +103,7 @@ export default function SignupPage() {
           <input
             {...register("phone")}
             type="text"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border  px-3 py-2"
             disabled={isSubmitting}
           />
           {errors.phone && (
@@ -117,7 +117,7 @@ export default function SignupPage() {
           <input
             {...register("password")}
             type="password"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border  px-3 py-2"
             disabled={isSubmitting}
           />
           {errors.password && (
@@ -129,7 +129,7 @@ export default function SignupPage() {
           <input
             {...register("confirm_password")}
             type="password"
-            className="w-full border rounded px-3 py-2"
+            className="w-full border  px-3 py-2"
             disabled={isSubmitting}
           />
           {errors.confirm_password && (
@@ -141,7 +141,7 @@ export default function SignupPage() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="w-full bg-blue-600 text-white py-2  hover:bg-blue-700 disabled:opacity-50"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Signing up…" : "Sign Up"}

@@ -36,7 +36,7 @@ export default function VerifyEmailPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-8 rounded shadow-md w-full max-w-sm"
+        className="bg-white p-8  shadow-md w-full max-w-sm"
       >
         <h1 className="text-2xl font-bold mb-6 text-center">
           Verify Email
@@ -49,7 +49,7 @@ export default function VerifyEmailPage() {
           <label className="block mb-1">Verification Code</label>
           <input
             {...register("code")}
-            className="w-full border rounded px-3 py-2"
+            className="w-full border  px-3 py-2"
             disabled={isSubmitting}
           />
           {errors.code && (
@@ -59,7 +59,7 @@ export default function VerifyEmailPage() {
 
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:opacity-50"
+          className="w-full bg-green-600 text-white py-2  hover:bg-green-700 disabled:opacity-50"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Verifying…" : "Verify"}

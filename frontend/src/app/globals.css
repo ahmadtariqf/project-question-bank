@@ -5,7 +5,7 @@
   --foreground: #171717;
 }
 
-@theme inline {
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -19,8 +19,76 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background 0.4s cubic-bezier(.4, 0, .2, 1), color 0.4s cubic-bezier(.4, 0, .2, 1), border-color 0.4s cubic-bezier(.4, 0, .2, 1);
+}
+
+:root,
+[data-theme="light"] {
+  --background: #f8fafc;
+  --foreground: #232946;
+  --surface: #ffffff;
+  --accent: #3bb2f6;           /* Teal blue for primary actions */
+  --accent-contrast: #fff;
+  --border: #e0e7ef;
+
+  /* Additional variables */
+  --card-bg: #fff;
+  --card-shadow: 0 2px 8px rgba(59,178,246,0.08);
+  --input-bg: #f1f5f9;
+  --input-border: #e0e7ef;
+  --input-focus: #3bb2f6;
+  --navbar-bg: #fff;
+  --navbar-border: #e0e7ef;
+  --success: #22c55e;          /* Green for success */
+  --error: #ef4444;            /* Red for errors */
+  --warning: #fbbf24;          /* Yellow for warnings */
+  --info: #a78bfa;             /* Purple for info */
+  --highlight: #fb923c;        /* Orange for highlights */
+}
+
+[data-theme="dark"] {
+  --background: #181824;
+  --foreground: #f3f4f6;
+  --surface: #232946;
+  --accent: #3bb2f6;           /* Teal blue for primary actions */
+  --accent-contrast: #181824;
+  --border: #232946;
+
+  /* Additional variables */
+  --card-bg: #232946;
+  --card-shadow: 0 2px 8px rgba(59,178,246,0.18);
+  --input-bg: #181824;
+  --input-border: #232946;
+  --input-focus: #3bb2f6;
+  --navbar-bg: #232946;
+  --navbar-border: #232946;
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #fbbf24;
+  --info: #a78bfa;
+  --highlight: #fb923c;
+}
+
+@keyframes dropdown {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.animate-dropdown {
+  animation: dropdown 0.18s ease-out;
 }
